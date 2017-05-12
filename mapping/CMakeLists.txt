@@ -26,3 +26,5 @@ target_link_libraries(mapping_PLY_rs gtsam vro sr4k_io ${OpenCV_LIBS})
  add_executable(mapping_PCD_rs mapping_PCD_rs.cpp)
  target_link_libraries(mapping_PCD_rs gtsam_graph vro sr4k_io ${OpenCV_LIBS})
 
+add_executable(map_video map_video.cpp)
+target_link_libraries(map_video gtsam_graph vro sr4k_io ${OpenCV_LIBS})
