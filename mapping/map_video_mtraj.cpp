@@ -1,7 +1,7 @@
 /*
- *  May. 11 2017, He Zhang, hxzhang1@ualr.edu
+ *  May. 12 2017, He Zhang, hxzhang1@ualr.edu
  *
- *  record a video of reconstructing the 3D map, given the trajectory and point clouds 
+ *  record a video of reconstructing the 3D map, given multilpe trajectories and point clouds 
  *
  *
  * */
@@ -33,6 +33,7 @@ struct trajItem
 void setTu2c(Pose3& Tu2c);
 bool showPCDIncremental(string traj_f, string img_dir, CamModel&); 
 bool readTraj(std::string f, vector<struct trajItem>& );
+bool readTrajPly(std::string f, vector<struct trajItem>& t); 
 void addLine( CVTKViewer<pcl::PointXYZRGBA>& , float sx, float sy, float sz, float ex, float ey, float ez, COLOR c, string id); 
 void moveCameraInArc(CVTKViewer<pcl::PointXYZRGBA>& v); 
 
@@ -49,7 +50,7 @@ void filterPointCloud(float _voxel_size, typename pcl::PointCloud<PointT>::Ptr& 
 
 int main(int argc, char* argv[])
 {
-  ros::init(argc, argv, "map_video"); 
+  ros::init(argc, argv, "map_video_mtraj"); 
   ros::NodeHandle n; 
   // euler_pub = n.advertise<std_msgs::Float32MultiArray>("/euler_msg", 10); \
 
@@ -59,6 +60,10 @@ int main(int argc, char* argv[])
 
   string traj_f("/home/david/.ros/vio/eit_f5_r2/eit_f5_r2_pvio_trajectory.log"); 
   string img_dir("/home/david/work/data/sr4k/imu_bdat/eit_f5_r2/sr4k"); 
+
+  ros::NodeHandle np("~"); 
+  np.param("pvio_traj_file", traj_f, traj_f); 
+  np.param("img_directory", img_dir, img_dir); 
 
   cout<<"usage: ./map_video img_dir trajectory_file"<<endl; 
 
@@ -81,8 +86,60 @@ bool showPCDIncremental(string traj_f, string img_dir, CamModel& cam)
     return false; 
   }
   
+  // Load other trajectories 
+  ros::NodeHandle np("~"); 
+  string traj_dir("/home/david/.ros/vio/eit_f5_r2"); 
+  np.param("trajectory_dir", traj_dir, traj_dir); 
+
+  vector< vector<trajItem> > vtVIO; 
+  // string vio5 = traj_dir + "/ba_5_vio_trajectory.log"; 
+  // string vio10 = traj_dir + "/ba_10_vio_trajectory.log"; 
+  // string vio20 = traj_dir + "/ba_20_vio_trajectory.log"; 
+  // string vio30 = traj_dir + "/ba_30_vio_trajectory.log"; 
+ 
+  string vio5 = traj_dir + "/ba_5_vio.ply"; 
+  string vio10 = traj_dir + "/ba_10_vio.ply"; 
+  string vio20 = traj_dir + "/ba_20_vio.ply"; 
+  string vio30 = traj_dir + "/ba_30_vio.ply"; 
+ 
+
+  vector<trajItem> tmp; 
+  // if(!readTraj(vio5, tmp))
+  if(!readTrajPly(vio5, tmp))
+  {
+    return false; 
+  }
+  vtVIO.push_back(tmp); tmp.clear(); 
+  // if(!readTraj(vio10,tmp))
+  if(!readTrajPly(vio10,tmp))
+  {
+    return false; 
+  }
+  vtVIO.push_back(tmp); tmp.clear(); 
+  // if(!readTraj(vio20, tmp))
+  if(!readTrajPly(vio20, tmp))
+  {
+    return false; 
+  }
+  vtVIO.push_back(tmp); tmp.clear(); 
+  // if(!readTraj(vio30, tmp))
+  if(!readTrajPly(vio30, tmp))
+  {
+    return false; 
+  }
+  vtVIO.push_back(tmp); tmp.clear(); 
+  
+  COLOR vcVIO[4]; 
+  vcVIO[0] = BLUE;  // Tg = 5 blue 
+  vcVIO[1] = RED;   // Tg = 10
+  vcVIO[2] = PURPLE; // Tg = 20 
+  vcVIO[3] = GREEN; // Tg = 30
+  
+  vector<string> vsId(4); 
+  vsId[0] = "Tg_5"; vsId[1] = "Tg_10"; vsId[2] = "Tg_20"; vsId[3] = "Tg_30"; 
+
   CloudPtr pc_w(new Cloud); 
-  cv::Mat i_img, d_img;   
+  cv::Mat i_img, d_img, df_img;   
   CSReadCV r4k; 
   
   // transform from imu to camera 
@@ -136,10 +193,17 @@ bool showPCDIncremental(string traj_f, string img_dir, CamModel& cam)
     ss<<img_dir<<"/d1_"<<setfill('0')<<setw(7)<<ti.sid<<".bdat";  // setw(4)
     r4k.readOneFrameCV(ss.str(), i_img, d_img);
 
+    d_img.convertTo(df_img, CV_32FC1, 0.0001, 0); 
     // show images 
     cv::imshow("intensity img", i_img); 
-    cv::imshow("depth img", d_img); 
-    cv::waitKey(3); 
+    cv::imshow("depth img", df_img); 
+    if(i==0)
+    {
+      cv::waitKey(0);
+    }
+    else{
+      cv::waitKey(3); 
+    }
 
     // point cloud 
     CloudPtr pci(new Cloud);
@@ -155,7 +219,7 @@ bool showPCDIncremental(string traj_f, string img_dir, CamModel& cam)
 
     // voxel grid filter
     CloudPtr tmp(new Cloud); 
-    filterPointCloud<pcl::PointXYZRGBA>(0.1, pc_w, tmp); 
+    filterPointCloud<pcl::PointXYZRGBA>(0.10, pc_w, tmp); 
     pc_w.swap(tmp); 
 
     // set pose of the current point cloud 
@@ -176,19 +240,33 @@ bool showPCDIncremental(string traj_f, string img_dir, CamModel& cam)
         ss<<"pvio_" << i;
   
         addLine(v, i1.px, i1.py, i1.pz, i2.px, i2.py, i2.pz, YELLOW, ss.str()); 
+
+        // add other trajectories for comparison 
+        for(int j = 0; j<vtVIO.size(); j++)
+        {
+          vector<trajItem> & vT = vtVIO[j]; 
+          if(i<vT.size() && i-K >= 0)
+          {
+            trajItem& j1 = vT[i-K]; 
+            trajItem& j2 = vT[i]; 
+            stringstream ss; 
+            ss<<vsId[j]<<i; 
+            addLine(v, j1.px, j1.py, j1.pz, j2.px, j2.py, j2.pz, vcVIO[j], ss.str()); 
+          }
+        }
       }
 
       // show the point cloud 
-      v.getViewer()->removeCoordinateSystem(); 
+      // v.getViewer()->removeCoordinateSystem(); 
       // v.runOnce(1); 
       v.getViewer()->updatePointCloud(pwi, "pwi"); 
       v.getViewer()->updatePointCloud(pc_w, "pw");
       // v.getViewer()->resetCameraViewpoint("pwi"); 
       // v.getViewer()->setCameraPosition(ti.px, ti.py, ti.pz, view_pj.x(), view_pj.y(), view_pj.z(), up_pj.x(), up_pj.y(), up_pj.z());
       v.getViewer()->setCameraPosition(pos_pw.x(), pos_pw.y(), pos_pw.z(), view_pw.x(), view_pw.y(), view_pw.z(), up_pw.x(), up_pw.y(), up_pw.z());
-      v.getViewer()->addCoordinateSystem(0.2, Tf3);
-      v.runOnce(30); 
-      usleep(30*1000); 
+      // v.getViewer()->addCoordinateSystem(0.2, Tf3);
+      v.runOnce(10); 
+      usleep(20*1000); 
     }
   }
     
@@ -220,7 +298,8 @@ void moveCameraInArc(CVTKViewer<pcl::PointXYZRGBA>& v)
   double dtheta = M_PI/4./(N-1.);
   double px, py, pz, upx, upy, upz;  
 
-  for(int i=0; i<N/2; i++)
+  // for(int i=0; i<N/2; i++)
+  int i = 0; 
   {
     pz = -cos(i * dtheta)*r; 
     py = -sin(i * dtheta)*r; 
@@ -249,6 +328,36 @@ void addLine( CVTKViewer<pcl::PointXYZRGBA>& v, float sx, float sy, float sz, fl
   p2.x = ex; p2.y = ey; p2.z = ez; 
 
   v.getViewer()->addLine(p1, p2, g_color[c][0]/255., g_color[c][1]/255., g_color[c][2]/255., id); 
+}
+
+bool readTrajPly(std::string f, vector<struct trajItem>& t)
+{
+  ifstream inf(f.c_str()); 
+  if(!inf.is_open())
+  {
+    cout<<"failed to open file : "<<f<<endl;
+    return false;
+  }
+
+  char buf[4096]; 
+  for(int i=0; i<10; i++) // get rid of the first 10 lines 
+  {
+    inf.getline(buf, 4096);
+  }
+
+  while(inf.getline(buf, 4096))
+  {
+    trajItem ti; 
+    // sscanf(buf, "%d %f %f %f %f %f %f %d", &ti.id, &ti.px, &ti.py, &ti.pz, &ti.roll, &ti.pitch, &ti.yaw, &ti.sid); 
+    // sscanf(buf, "%d %f %f %f %f %f %f %f %d", &ti.id, &ti.px, &ti.py, &ti.pz, &ti.qx, &ti.qy, &ti.qz, &ti.qw, &ti.sid); 
+    sscanf(buf, "%f %f %f", &ti.px, &ti.py, &ti.pz);
+    t.push_back(ti); 
+  }
+
+  cout << " read "<<t.size()<<" trajectory items"<<endl;
+  return true;
+
+ 
 }
 
 bool readTraj(std::string f, vector<struct trajItem>& t)
