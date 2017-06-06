@@ -1,0 +1,23 @@
+
+<launch>
+
+<arg name="data_name" default="creep_ob2"/> <!--creep_flat_r2 creep_flat1 creep_ob1 creep_ob2 norm_ob3 on_flat on_ob1 on_ob2 creep_ob1 oc_flat1 oc_ob1 oc_ob2 -->
+
+
+  <node pkg="graph_slam" type="test_gtsam_graph" name="test_with_sr4k" output="screen">
+     <param name="sr_data_file_dir"     value="/media/david/work/work/data/SLAM/SR4000/imu_fuse/frames_$(arg data_name)"/>
+     <param name="imu_file_dir"         value="/media/david/work/work/data/SLAM/SR4000/imu_fuse/imu_$(arg data_name).dat"/>
+     <param name="camera_syn_data"      value="/media/david/work/work/data/SLAM/SR4000/imu_fuse/ftiming_$(arg data_name).dat"/>
+     <param name="sr_end_frame"         value="7607"/> <!-- on_ob2: 7377 on_ob1: 6174 on_flat: 7140 oc_flat1: 6930 oc_ob1:5866 oc_ob2: 5180 norm_ob3: 7565 creep_ob2:7886 creep_ob1: 7360 creep_flat1: 7607 creep_flat_r2: 6412-->
+     <param name="imu_id_first_cam"     value="10"/>
+
+     <param name="vo_small_translation" value="0.04"/>
+     <param name="vo_small_rotation"    value="2"/>
+     <param name="gt_optimize_step"     value="10000"/> <!-- 0 means dead reckoning, do not optimzie -->
+     <param name="gt_lookback_nodes"    value="10"/>
+     <param name="gt_output_dir"        value="/home/david/.ros/imu_fuse_mems"/>
+     <param name="gt_initial_pitch"     value="-14.7"/>
+  </node>
+
+
+</launch>

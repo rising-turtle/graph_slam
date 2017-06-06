@@ -1,0 +1,11 @@
+<launch>
+
+<arg name="where" default = "/home/david/work/ros/indigo/devel/lib/graph_slam/file_etas_f5"/>
+
+  <node pkg="plane" type="view_planes" name="view_planes" output="screen">
+    <param name="frame_id"      value="1100"/> 
+    <param name="sr_data_file_dir" value="/home/david/work/data/sr4k/imu_bdat/etas_f5/sr4k"/>
+    <param name="min_num_pts_of_plane"      value="2000"/>
+  </node>
+
+</launch>

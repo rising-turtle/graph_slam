@@ -1,0 +1,52 @@
+
+<launch>
+
+<arg name="data_dir" default="/home/david/work/data/sr4k/imu_bdat/eit_f5_r2"/> <!-- etas_f2_r1 etas_f4_r1 eit_f23_r1 eit_f5_r1 etas_f2 etas_f5_r1 etas_f5 -->
+<arg name="data_name" default="eit_f5_r2"/> <!-- etas_f2_r1 eit_f1_r1 etas_f4_r1 eit_f23_r1  eit_f5_r1 etas_f2 etas_f5_r1 etas_f5 -->
+
+  <node pkg="graph_slam" type="test_vro_imu_graph" name="test_vro_imu_graph" output="screen">
+    <param name="imu_file"         value="$(arg data_dir)/imu_v100.log"/>
+    <param name="imu_time_file"    value="$(arg data_dir)/sr4k/timestamp.log"/>
+    <param name="sr_data_file_dir"  value="$(arg data_dir)/sr4k"/>
+    <param name="sr_start_frame"    value="1" />
+    <param name="sr_end_frame"      value="27000"/> <!-- 11300-->
+    <param name="sr_data_name"      value="$(arg data_name)"/>
+    <param name="plane_aided"       value="true"/>
+    <param name="view_plane"        value="false"/>
+    <param name="plane_number_threshold"    value="0.4"/> <!--g 0.3 0.4  0.2 -->   <!--bad  0.3 0.4 0.5 -->
+    <param name="min_num_pts_of_plane"      value="5000"/> <!--g 3000 5000 2000 -->  <!--bad 5000 6000 5000-->
+    <param name="chi2_for_vro"      value="false"/> <!-- not a good idea whether to use chi2 square test  -->
+    <param name="gt_output_dir"     value="/home/david/.ros/vio/$(arg data_name)"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/$(arg data_name)_ba/$(arg data_name)_ba_results.log_10"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/etas_f5_ba/vro_results.log_ideal"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/etas_f5_ba/vro_results.log_ba_5_final"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_hybrid_ba_8_final"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_10_final_hybrid"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_5_manual"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/eit_f1_r1_vro_results.log"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_5_final_hybrid"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_5_final_manual"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/eit_f23_vro_results.log"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/eit_f5_r1_vro_results.log"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/etas_f5_r1_vro_results.log"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_5_final_manual"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/etas_f2_r1_vro_results.log"/>
+
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/tmp"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_20"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/vro_results.log_ba_10_final"/>
+
+    <param name="trajectory_color" value="5"/> <!-- 0:RED 1:GREEN 2:BLUE 3:PURPLE 4:WHITE 5:YELLOW 6:DARK -->
+
+    <!--param name="vro_results_file" value="/home/david/.ros/vro_results/$(arg data_name)_ba/vro_results.log_hybrid_add_final"/--> <!-- vro_results.log_hybrid_add_final -->
+  </node>
+
+
+</launch>

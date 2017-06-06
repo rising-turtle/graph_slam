@@ -1,0 +1,8 @@
+<launch>
+
+  <node pkg="graph_slam" type="test_match_two_frames" name="vro_match_two_frames" output="screen">
+    <param name="src_filename"      value="/home/david/work/data/sr4k/imu_bdat/etas_f4_r1/sr4k/d1_0001891.bdat"/>
+    <param name="tar_filename"      value="/home/david/work/data/sr4k/imu_bdat/etas_f4_r1/sr4k/d1_0001887.bdat"/>
+  </node>
+
+</launch>

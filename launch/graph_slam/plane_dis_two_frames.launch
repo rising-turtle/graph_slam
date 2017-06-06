@@ -1,0 +1,22 @@
+<launch>
+
+<arg name="where" default = "/home/david/work/ros/indigo/devel/lib/graph_slam/file_etas_f5"/> 
+
+  <node pkg="graph_slam" type="test_plane_dis" name="test_plane_dis" output="screen">
+    <param name="to_idj"      value="3094"/>   <!-- 1014 361  2054 3064 2750 3259 -->
+    <param name="from_idi"        value="3086"/> <!-- 1012 359 2050 3062 2748 3251 -->
+    <param name="sr_data_file_dir" value="/home/david/work/data/sr4k/imu_bdat/eit_f23/sr4k"/> <!-- etas_f5_r1 etas_f2_r1 eit_f1_r1 etas_f4_r1 eit_f23_r1 eit_f5_r1 etas_f2 etas_f5 -->
+    <param name="min_num_pts_of_plane"      value="2000"/>
+    <param name="vro_results_file" value="$(arg where)/../vo_results_merge.log"/>
+    <param name="vro_results_file" value="$(arg where)/../vro_results.log_ba_5_final"/>
+    <param name="vro_results_file" value="$(arg where)/vro_results.log_hybrid"/>
+
+
+    <param name="vro_results_file" value="$(arg where)/../vro_results.log_ba_10_final_hybrid"/>
+    <param name="vro_results_file" value="$(arg where)/../vro_results.log_hybrid_ba_8"/>  
+    <param name="vro_results_file" value="$(arg where)/../vro_results.log"/>
+    <param name="vro_results_file" value="$(arg where)/../vro_results.log_ba_10"/>
+
+  </node>
+
+</launch>

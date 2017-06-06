@@ -1,0 +1,15 @@
+
+<launch>
+
+<arg name="data_name" default="eit_f5_r2"/> <!-- etas_f2 etas_f5_r1 etas_f5 etas_f4_r1 eit_f23  eit_f5_r2 eit_f5_r1 -->
+<arg name="img_dir" default="/home/david/work/data/sr4k/imu_bdat"/>
+
+<arg name="traj_dir" default="/home/david/.ros/vio"/>
+
+  <node pkg="graph_slam" type="map_video_mtraj" name="map_video_mtraj" output="screen">
+    <param name="pvio_traj_file"    value="$(arg traj_dir)/$(arg data_name)/eit_f5_r2_pvio_trajectory.log"/>
+    <param name="trajectory_dir"    value="$(arg traj_dir)/$(arg data_name)/"/>
+    <param name="img_directory"     value="$(arg img_dir)/$(arg data_name)/sr4k"/>
+  </node>
+
+</launch>

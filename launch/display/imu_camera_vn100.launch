@@ -1,0 +1,18 @@
+
+
+<launch>
+
+<arg name="data_dir" default="/home/david/work/data/sr4k/imu_bdat/simple_motion/static_rg"/> <!-- -->
+
+
+  <node pkg="graph_slam" type="test_vn100" name="test_imu_vn100" output="screen">
+     <param name="img_dir"          value="$(arg data_dir)/sr4k"/>
+     <param name="imu_file"         value="$(arg data_dir)/imu_v100.log"/>
+     <param name="img_time_file"    value="$(arg data_dir)/sr4k/timestamp.log"/>
+  </node>
+
+  <node pkg="display" type="test_gyro_display" name="test_gyro_display" output="screen">
+   </node>
+  
+
+</launch>

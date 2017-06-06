@@ -1,0 +1,24 @@
+
+<launch>
+
+<arg name="data_dir" default="/home/david/work/data/sr4k/imu_bdat/etas_f5"/> <!-- etas_f2 etas_f5_r1 etas_f5 -->
+<arg name="data_name" default="etas_f5"/> <!-- etas_f2 etas_f5_r1 etas_f5 -->
+
+  <node pkg="graph_slam" type="test_ba_imu_graph" name="test_ba_imu_graph" output="screen">
+    <param name="imu_file"         value="$(arg data_dir)/imu_v100.log"/>
+    <param name="imu_time_file"    value="$(arg data_dir)/sr4k/timestamp.log"/>
+    <param name="sr_data_file_dir"  value="$(arg data_dir)/sr4k"/>
+    <param name="sr_start_frame"    value="1" />
+    <param name="sr_end_frame"      value="5000"/>
+    <param name="sr_data_name"      value="$(arg data_name)"/>
+    <param name="plane_aided"       value="false"/>
+    <param name="view_plane"        value="false"/>
+    <param name="use_imu"           value="false"/>
+    <param name="plane_number_threshold"    value="0.5"/>
+    <param name="chi2_for_vro"      value="false"/> <!-- not a good idea whether to use chi2 square test  -->
+    <param name="gt_output_dir"     value="/home/david/.ros/vio/$(arg data_name)"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/$(arg data_name)_vro_results.log_hybrid"/>
+  </node>
+
+
+</launch>

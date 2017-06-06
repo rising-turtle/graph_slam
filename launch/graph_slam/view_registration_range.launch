@@ -1,0 +1,13 @@
+<launch>
+
+<arg name="where" default = "/home/david/work/ros/indigo/devel/lib/graph_slam/file_etas_f5"/>
+
+<arg name="ros_path" default = "/home/david/.ros/vro_results"/>
+
+  <node pkg="graph_slam" type="view_registration_range" name="view_registration_range" output="screen">
+    <param name="end_to"      value="3"/> <!-- 3111 3109 3107 3349 401 1219 2691 2013  1429 1214 374 2688 2673 176 602 470 396 -->
+    <param name="start_from"        value="0"/> <!-- 3098 3100 3096 3346 399 1218 2690  2009  1427 1212 373 2686 2672 173 600 468 394 -->
+    <param name="sr_data_file_dir" value="/home/david/work/data/sr4k/imu_bdat/etas_f5/sr4k"/>
+    <param name="vro_results_file" value="$(arg ros_path)/etas_f5_vro_results.log"/>
+     </node>
+</launch>

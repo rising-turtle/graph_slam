@@ -1,0 +1,19 @@
+
+<launch>
+
+<arg name="data_name" default="on_flat"/> <!-- on_ob1 creep_ob1 oc_flat1 -->
+
+
+  <node pkg="graph_slam" type="test_imu_MEMS" name="test_imu_MEMS" output="screen">
+     <param name="sr_data_file_dir"     value="/media/david/work/work/data/SLAM/SR4000/imu_fuse/frames_$(arg data_name)"/>
+     <param name="imu_file_dir"         value="/media/david/work/work/data/SLAM/SR4000/imu_fuse/imu_$(arg data_name).dat"/>
+     <param name="camera_syn_data"      value="/media/david/work/work/data/SLAM/SR4000/imu_fuse/ftiming_$(arg data_name).dat"/>
+     <param name="sr_end_frame"         value="7140"/>
+     <param name="imu_id_first_cam"     value="10"/>
+  </node>
+
+  <node pkg="display" type="test_gyro_display" name="test_gyro_display" output="screen">
+   </node>
+  
+
+</launch>

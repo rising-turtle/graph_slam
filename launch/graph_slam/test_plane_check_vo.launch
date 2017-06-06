@@ -1,0 +1,22 @@
+<launch>
+
+<arg name="data_dir" default="/home/david/work/data/sr4k/imu_bdat/etas_f5"/> <!-- etas_f2 etas_f5_r1 etas_f5 -->
+<arg name="data_name" default="etas_f5_r1"/> <!-- etas_f2 etas_f5_r1 etas_f5 -->
+<arg name="where" default = "/home/david/work/ros/indigo/devel/lib/graph_slam"/>
+
+  <node pkg="graph_slam" type="test_plane_check_vo" name="test_plane_check_vo" output="screen">
+    <param name="sr_data_file_dir"  value="$(arg data_dir)/sr4k"/>
+    <param name="sr_start_frame"    value="1" />
+    <param name="sr_end_frame"      value="22330"/>
+    <param name="sr_data_name"      value="$(arg data_name)"/>
+    <!-- param name="plane_number_threshold"    value="0.4"/-->
+    <param name="min_num_pts_of_plane"      value="3000"/> <!-- 4000 -->
+    <param name="matched_num_log"           value="$(arg where)/input_match.log"/>
+    <param name="result_log"                value="$(arg where)/num_vs_err.log"/>
+    <param name="vro_results_file" value="/home/david/.ros/vro_results/$(arg data_name)_ba/vro_results.log_ba_20"/>
+    <param name="vro_results_file" value="$(arg where)/vro_results.log_hybrid_add"/>
+  </node>
+
+
+</launch>
+

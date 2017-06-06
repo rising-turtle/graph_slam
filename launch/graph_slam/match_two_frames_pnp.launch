@@ -1,0 +1,8 @@
+<launch>
+
+  <node pkg="graph_slam" type="test_match_pnp" name="vro_match_pnp" output="screen">
+    <param name="src_filename"      value="/home/david/work/data/sr4k/imu_bdat/eit_f23/sr4k/d1_0001006.bdat"/>
+    <param name="tar_filename"      value="/home/david/work/data/sr4k/imu_bdat/eit_f23/sr4k/d1_0001002.bdat"/>
+  </node>
+
+</launch>

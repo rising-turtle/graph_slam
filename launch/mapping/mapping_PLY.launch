@@ -1,0 +1,33 @@
+
+<launch>
+
+<arg name="result_dir" default="/home/david/.ros/vio"/>
+<arg name="data_name" default="etas_f5_r1"/> <!-- eit_f5_r2 eit_f23  etas_f2_r1 etas_f4_r1 eit_f5_r1 etas_f2 etas_f5 -->
+<arg name="mode" default="pvio"/> <!-- vio_before vio_after  vo_before -->
+<arg name="img_dir" default="/home/david/work/data/sr4k/imu_bdat"/>
+
+  <node pkg="graph_slam" type="mapping_PLY" name="mapping_PLY" output="screen">
+    <param name="trajectory_file"   value="$(arg result_dir)/$(arg data_name)/$(arg data_name)_$(arg mode)_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f2/etas_f2_vo_after_trajectory.log"/> 
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f5/hybrid_pvio_4_trajectory.log"/>
+
+    <param name="trajectory_file"   value="/home/david/.ros/vio/eit_f5_r1/hybrid_pvio_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f2/hybrid_pvio_2_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f2_r1/etas_f2_r1_vio_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f4_r1/pvio_2_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f5/pvio_1_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/eit_f23/pvio_2_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/eit_f5_r1/hybrid_pvio_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/eit_f5_r2/eit_f5_r2_pvio_trajectory.log"/>
+    <param name="trajectory_file"   value="/home/david/.ros/vio/etas_f5_r1/pvio_1_trajectory.log"/>
+
+    <param name="img_directory"     value="$(arg img_dir)/$(arg data_name)/sr4k"/>
+    <param name="output_PLY_file"   value="$(arg result_dir)/$(arg data_name)/$(arg data_name)_$(arg mode)_pc.ply"/>
+    <param name="downsample_skip"   value="2"/>
+    <param name="top_left_u"        value="10"/>
+    <param name="top_left_v"        value="40"/>
+    <param name="bot_right_u"       value="170"/>
+    <param name="bot_right_v"       value="140"/>
+  </node>
+
+</launch>

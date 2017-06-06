@@ -1,0 +1,15 @@
+
+
+<launch>
+
+<arg name="data_name" default="etas_f4_r1"/> <!-- etas_f5_r1 eit_f1_r1 etas_f2 etas_f5 -->
+
+
+  <node pkg="graph_slam" type="test_ba" name="test_ba" output="screen">
+    <param name="src_filename"      value="/home/david/work/data/sr4k/imu_bdat/$(arg data_name)/sr4k/d1_0002156.bdat"/>  <!-- 2500 -->
+    <!-- 2688 396 392 383 341 406 2013 2688 2673 176 602 470 396  2666 -->
+    <param name="tar_filename"      value="/home/david/work/data/sr4k/imu_bdat/$(arg data_name)/sr4k/d1_0002153.bdat"/>  <!-- 2496 -->
+    <!-- 2686 394 390 380 325 404 2009 2686 2672 173 600 468 394 2665 -->
+  </node>
+
+</launch>
