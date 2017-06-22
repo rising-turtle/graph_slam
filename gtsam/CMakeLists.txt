@@ -2,14 +2,16 @@
 project(graph_slam)
 
 ################## VRO ############################
-execute_process(COMMAND rospack find visual_odometry OUTPUT_VARIABLE VO_ROOT)
-include_directories(/home/david/work/ros/indigo/src/visual_odometry/src/VRO)
+# execute_process(COMMAND rospack find visual_odometry OUTPUT_VARIABLE VO_ROOT)
+# include_directories(/home/david/work/ros/indigo/src/visual_odometry/src/VRO)
+include_directories("../../visual_odometry/src/VRO")
 
-message("STATUS VO_ROOT : ${VO_ROOT}")
-include_directories(${VO_ROOT}/src/VRO)
+# message("STATUS VO_ROOT : ${VO_ROOT}")
+# include_directories(${VO_ROOT}/src/VRO)
 
 ################### GTSAM 4.0 ######################
-set(GTSAM_ROOT /home/david/work/3rdlibs/gtsam-4.0/build)
+# set(GTSAM_ROOT /home/david/work/3rdlibs/gtsam-4.0/build)
+set(GTSAM_ROOT /home/davidz/work/3rdlibs/gtsam-4.0/build)
  find_package(GTSAM REQUIRED 
    PATHS ${GTSAM_ROOT}) 
 include_directories(${GTSAM_INCLUDE_DIR} ${GTSAM_ROOT}) # ${GTSAM_ROOT}/../gtsam/3rdparty/Eigen) # /usr/include/eigen3

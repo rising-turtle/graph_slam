@@ -31,23 +31,25 @@ boost::shared_ptr<PreintegratedCombinedMeasurements::Params> CImuVn100::getIMUPa
     float dt = 1./fps;
     int hour = 3600; 
     double g = 9.81; // m/s^2 
-    double gyro_noise_density = 0.0035; // '/s/sqrt(hz)
-    double accel_noise_density = 0.14; // mg 
-    double gyro_bias_stability = 10;  // < 10'/hr 
-    double accel_bias_stability = 0.04; // 0.04 mg
+    double gyro_noise_density = 0.0035; // '/s/sqrt(hz) -> rad / s / sqrt(Hz)
+    double accel_noise_density = 0.14; // 0.14  mg/√Hz  -> m / s^2 / sqrt(Hz)
+    double gyro_bias_stability = 10;  // < 10'/hr * sqrt(Hz) -> rad / s^2 / sqrt(Hz)
+    double accel_bias_stability = 0.04; // 0.04 mg * sqrt(Hz) -> m / s^3 / sqrt(Hz)
     
     // use the sensor specs to build the noise model for the IMU factor 
-    double accel_noise_sigma = accel_noise_density * 1e-3 * g ; // 100 delta_a (m/(s^2*sqrt(HZ))) 0.0003924; 
-    double gyro_noise_sigma =  D2R(gyro_noise_density) ; // delta_g (rad/(s*sqrt(HZ))) 0.000205689024915; 
-    double accel_bias_rw_sigma = (accel_bias_stability*1e-3*g)*sqrt(fps);  // 100 delta_ba (m/(s^3*sqrt(hz)))  0.004905; 
-    double gyro_bias_rw_sigma = (D2R(gyro_bias_stability)/hour)*sqrt(fps); // delta_bg (rad/(s^2*sqrt(hz))) 0.000001454441043; 
+    double accel_noise_sigma = accel_noise_density * 1e-3 * g ; // 100 delta_a (m/(s^2*sqrt(HZ))) ~1.4e-3  0.0003924; 
+    double gyro_noise_sigma =  D2R(gyro_noise_density) ; // delta_g (rad/(s*sqrt(HZ))) ~0.6e-4 0.000205689024915; 
+    double accel_bias_rw_sigma = (accel_bias_stability*1e-3*g)*sqrt(fps);  // 100 delta_ba (m/(s^3*sqrt(hz))) ~5.5e-3 0.004905; 
+    double gyro_bias_rw_sigma = (D2R(gyro_bias_stability)/hour)*sqrt(fps); // delta_bg (rad/(s^2*sqrt(hz))) ~0.5e-4 0.000001454441043; 
 
     // cout <<" HI I AM HERE 14"<<endl; 
-    Matrix33 measured_acc_cov = Matrix33::Identity(3,3)*pow(accel_noise_sigma, 2); 
-    Matrix33 measured_omega_cov = Matrix33::Identity(3,3)*pow(gyro_noise_sigma, 2); 
+    // according to https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model
+    // 
+    Matrix33 measured_acc_cov = Matrix33::Identity(3,3)*pow(accel_noise_sigma, 2) * 10. /dt ; // sigma_a * sigma_a / dt * 10, ~2e-6 * 200 *10 = 4e-3
+    Matrix33 measured_omega_cov = Matrix33::Identity(3,3)*pow(gyro_noise_sigma, 2) /dt; // sigma_g * sigma_g / dt ~ 0.36e-8 * 200 = 0.72e-6
     Matrix33 integration_error_cov = Matrix33::Identity(3,3)*1e-4; // error committed in integration position from veloctiy
-    Matrix33 bias_acc_cov = Matrix33::Identity(3,3) * pow(accel_bias_rw_sigma, 2);
-    Matrix33 bias_omega_cov = Matrix33::Identity(3,3) * pow(gyro_bias_rw_sigma, 2);
+    Matrix33 bias_acc_cov = Matrix33::Identity(3,3) * pow(accel_bias_rw_sigma, 2) * dt; // sigma_ba * sigma_ba * dt, ~ 3e-5 * 0.05 = 1.5e-6
+    Matrix33 bias_omega_cov = Matrix33::Identity(3,3) * pow(gyro_bias_rw_sigma, 2) * dt; // sigma_bg * sigma_bg * dt, ~ 0.25e-8 * 0.05 = 1.25e-10
     Matrix66 bias_acc_omega_int = Matrix::Identity(6,6) * 1e-3; // error in the bias used for preintegration 
 
     // cout <<"HI I AM HERE 12"<<endl; 
