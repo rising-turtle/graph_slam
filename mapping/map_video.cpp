@@ -46,7 +46,6 @@ void filterPointCloud(float _voxel_size, typename pcl::PointCloud<PointT>::Ptr& 
   vog.filter(*out);
 }
 
-
 int main(int argc, char* argv[])
 {
   ros::init(argc, argv, "map_video"); 

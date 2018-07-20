@@ -17,6 +17,8 @@
 #include <gtsam/geometry/Pose3.h>
 #include <pcl/common/transforms.h>
 #include <pcl/io/pcd_io.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/passthrough.h>
 #include "pc_from_image.h"
 #include "sparse_feature_vo.h"
 #include "cam_model.h"
@@ -29,6 +31,9 @@ using namespace std;
 #define D2R(d) (((d)*M_PI)/180)
 
 string fname("/home/david/work/data/sr4k/imu_bdat/etas_f5/imu_v100.log"); 
+
+double voxel_grid_size = 0.02; 
+double z_far = 1.2; // 0 - z_far is kept 
 
 struct trajItem
 {
@@ -45,6 +50,26 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
 bool readTraj(std::string f, vector<struct trajItem>& );
 void LoadImages(string fAsso, vector<string> & vRGB, vector<string>& vDPT, vector<double>& vTime); 
 int  findIndex(double t, vector<double>& vTime); 
+
+template<typename PointT>
+void filterPointCloud(float _voxel_size, typename pcl::PointCloud<PointT>::Ptr& in,typename pcl::PointCloud<PointT>::Ptr& out)
+{
+  // voxelgrid filter
+  pcl::VoxelGrid<PointT> vog;
+  vog.setInputCloud(in); 
+  vog.setLeafSize(_voxel_size, _voxel_size, _voxel_size);
+  vog.filter(*out);
+}
+
+template<typename PointT>
+void passThroughZ(float z_far, typename pcl::PointCloud<PointT>::Ptr& in,typename pcl::PointCloud<PointT>::Ptr& out)
+{
+    pcl::PassThrough<PointT> pf; 
+    pf.setInputCloud(in); 
+    pf.setFilterFieldName("z"); 
+    pf.setFilterLimits(0.0, z_far); 
+    pf.filter(*out); 
+}
 
 int main(int argc, char* argv[])
 {
@@ -81,7 +106,8 @@ int main(int argc, char* argv[])
   np.param("top_left_v", sv, 0); 
   np.param("bot_right_u", eu, cam.m_cols); 
   np.param("bot_right_v", ev, cam.m_rows); 
-  
+  np.param("voxel_grid_size", voxel_grid_size, voxel_grid_size); 
+  np.param("z_pass_through", z_far, z_far); 
 
   int rect[4] = {su, sv, eu, ev}; 
 
@@ -178,10 +204,23 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
     generatePointCloud(i_img, d_img, 0.001, cam, *pci); 
     
     Eigen::Matrix4d T = p.matrix(); 
+    
+    {
+	// pass through filter 
+	CloudPtr tmp(new Cloud); 
+	passThroughZ<pcl::PointXYZRGBA>(z_far, pci, tmp); 
+	pci.swap(tmp); 
+    }
 
     pcl::transformPointCloud(*pci, *pwi, T.cast<float>()); // transform into global 
 
     *pc_w += *pwi; 
+    {
+	// voxel grid filter
+	CloudPtr tmp(new Cloud); 
+	filterPointCloud<pcl::PointXYZRGBA>(voxel_grid_size, pc_w, tmp); 
+	pc_w.swap(tmp); 
+    }
     ROS_INFO("handle frame at timestamp %lf, add %d pts", /*ti.timestamp*/ vTimes[ti.sid-1], pwi->points.size());
   }
   
