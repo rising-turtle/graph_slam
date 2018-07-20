@@ -28,6 +28,9 @@ target_link_libraries(imu_interface ${catkin_LIBRARIES} gtsam)
 add_executable(test_gtsam_graph test_gt_graph.cpp)
 target_link_libraries(test_gtsam_graph gtsam_graph vro sr4k_io)
 
+add_executable(main_rgbdslam_offline main_rgbdslam_offline.cpp)
+target_link_libraries(main_rgbdslam_offline gtsam_graph vro rs2h_io)
+
 ################ example in gtsam #############
 # add_executable(imuFactorsExample ImuFactorsExample.cpp)
 # target_link_libraries(imuFactorsExample gtsam_graph imu_interface ${catkin_LIBRARIES})

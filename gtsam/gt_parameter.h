@@ -27,6 +27,7 @@ class CGTParams
     double m_large_rotation;     // threshold for too small rotation [degree]
     int m_optimize_step;      // every n nodes to optimize 
     std::string m_output_dir;    // where to save the output result
+    bool m_record_vro_results; // whether to record vro's result
     double m_initial_pitch;   // pitch between camera and the floor, degree 
     std::string m_vro_result; // where to save vro result 
 

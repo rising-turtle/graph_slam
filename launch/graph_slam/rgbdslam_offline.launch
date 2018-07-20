@@ -1,0 +1,20 @@
+
+<launch>
+
+<arg name="data_name" default="dataset_1"/>  <!-- eit_f23  etas_f2_r1 etas_f4_r1 eit_f1_r1 eit_f23_r1 eit_f5_r1 etas_f2 etas_f5 -->
+
+  <node pkg="graph_slam" type="main_rgbdslam_offline" name="main_rgbdslam_offline" output="screen">
+     <param name="data_file_dir"        value="/home/davidz/work/data/drone/dataset_1"/>
+     <param name="vo_small_translation" value="0.04"/>
+     <param name="vo_small_rotation"    value="2"/>
+     <param name="vo_result_file"       value="./vro_results/$(arg data_name)_vro_results.log"/>
+     <param name="gt_optimize_step"     value="10000"/> <!-- 0 means dead reckoning, do not optimzie -->
+     <param name="gt_lookback_nodes"    value="5"/> <!-- 2 5 10 etas_f5 10  -->
+     <param name="vo_ransac_time"       value="2000"/>
+     
+     <!--param name="gt_output_dir"        value="/home/davidz/.ros/vio/$(arg data_name)"/-->
+     <param name="gt_output_dir" 	value="/home/davidz/work/data/drone"/>
+  </node>
+
+
+</launch>

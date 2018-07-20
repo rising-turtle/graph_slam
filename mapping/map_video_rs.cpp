@@ -160,8 +160,8 @@ bool showPCDIncremental()
 	// Point3 view_pj = Pj2w * view_pw; 
 	// Point3 up_pj = Pj2w * up_pw; 
 
-	Point3 pos_pc(0, -2, -5);  // camera pose
-	Point3 view_pc(0, 0, 5);  // camera view point 
+	Point3 pos_pc(0, -1, -2.5); // (0, -2, -5) // camera pose
+	Point3 view_pc(0, 0, 2.5);  // (0, 0, 5) camera view point 
 	// Point3 up_pc(0, -1, 0);   // (0, -1, 0) camera up direction 
 	// Point3 up_pc(0, 0, 1); 
 	Point3 up_pc(0, -0.98, 0.199); // dot(up_pc, view_pc-pos_pc) = 0
@@ -213,7 +213,7 @@ bool showPCDIncremental()
 	// pwi->sensor_origin_ = Tf.block<4,1>(0,3); 
 	// pwi->sensor_orientation_ = Eigen::Quaternionf(ti.qw, ti.qx, ti.qy, ti.qz); 
 
-	const int K = 1; 
+	const int K = 2; // 1 
 	if(!v.stopped())
 	{
 	    // add trajectory 
@@ -461,6 +461,15 @@ void generatePointCloud(cv::Mat& rgb, cv::Mat& dpt, pcl::PointCloud<pcl::PointXY
   return ;
 }
 
+inline bool sameTime(string t1, string t2)
+{
+    double dt1 = atof(t1.c_str());
+    double dt2 = atof(t2.c_str());
+    if(fabs(dt1-dt2) < 1e-3)
+	return true;
+    return false;
+}
+
 
 bool associateItem(vector<obsItem>& vobs, vector<trajItem>& vts, vector<string>& mv_timestamp, vector<string>& mv_rgb, vector<string>& mv_dpt)
 {
@@ -476,7 +485,8 @@ bool associateItem(vector<obsItem>& vobs, vector<trajItem>& vts, vector<string>&
     for(; j<mv_timestamp.size(); j++)
     {
       string tj = mv_timestamp[j]; 
-      if(tj == ti)
+      // if(tj == ti)
+      if(sameTime(ti, tj))
       {
         obs.frgb = mv_rgb[j]; 
         obs.fdpt = mv_dpt[j]; 

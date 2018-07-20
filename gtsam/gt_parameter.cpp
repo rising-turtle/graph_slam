@@ -20,6 +20,7 @@ CGTParams::CGTParams():
   m_optimize_step(10), 
   m_output_dir("./"), 
   m_initial_pitch(0),
+  m_record_vro_results(false),
   m_vro_result("vro_results.log")
 {}
 CGTParams::~CGTParams(){}

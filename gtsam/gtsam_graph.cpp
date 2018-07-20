@@ -84,7 +84,8 @@ CGraphGT::CGraphGT()
   mp_u2c = new Pose3; 
   mp_prev_bias = new imuBias::ConstantBias; 
   mp_prev_state = new NavState;
-  mb_record_vro_results = true; // TODO: parameterize this one  
+  // mb_record_vro_results = true; // TODO: parameterize this one  
+  mb_record_vro_results = CGTParams::Instance()->m_record_vro_results; 
   m_plane_landmark_id = 0; 
   m_sift_landmark_id =0 ;
 }

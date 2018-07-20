@@ -197,17 +197,7 @@ void test_with_sr4k()
           ROS_INFO("INSERT Node id %d , with seq_id %d", cur_node_id, pNewNode->m_seq_id);
           gt_graph.addToGTSAM(cur_p, cur_node_id, !valid_match); 
           Eigen::MatrixXd Cov = preint_imu_combined->preintMeasCov(); 
-          // if(cur_node_id >= 191)
-          {
-            // Eigen::MatrixXd Inf = Cov.inverse();
-            // Eigen::MatrixXd Inf = pm->edge.informationMatrix; 
-            // Eigen::MatrixXd Cov = Inf.inverse(); 
-            // cout <<"imu cov: "<<endl<<Cov<<endl; 
-            // cout <<"imu inf: "<<endl<<Inf<<endl;
-            // Eigen::MatrixXd T = Cov*Inf; 
-            // cout <<"T=cov*inf: "<<endl<<T<<endl;
-          }
-        }
+       }
         // whether add plane node  
         if(g_plane_factor)
         {
