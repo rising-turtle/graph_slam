@@ -1,0 +1,17 @@
+<launch>
+
+<arg name="data_dir" default="/home/davidz/work/data/drone/dataset_1"/> 
+<arg name="data_name" default="dataset_1"/>
+
+  <node pkg="graph_slam" type="main_rgbdslam_imu_offline" name="main_rgbdslam_imu_offline" output="screen">
+    <param name="imu_file"         value="$(arg data_dir)/imu_vn100_even.log"/>
+    <param name="img_time_file"    value="$(arg data_dir)/timestamp.txt"/>
+    <param name="data_file_dir"    value="$(arg data_dir)"/>
+    <param name="data_name" 	   value="$(arg data_name)"/>
+    <param name="gt_output_dir"    value="$(arg data_dir)"/>
+    <param name="vro_results_file" value="/home/davidz/.ros/vro_results/dataset_1_vro_results.log"/>
+    <param name="trajectory_color" value="5"/> <!-- 0:RED 1:GREEN 2:BLUE 3:PURPLE 4:WHITE 5:YELLOW 6:DARK -->
+
+  </node>
+
+</launch>

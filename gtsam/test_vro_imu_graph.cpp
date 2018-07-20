@@ -56,7 +56,7 @@ int g_f_start;
 int g_f_end;
 
 string g_imu_file; // imu measurement file 
-string g_imu_time_file; // sr timestamp file, which is used to synchronize between camera data and imu data 
+string g_img_time_file; // sr timestamp file, which is used to synchronize between camera data and imu data 
 string g_vro_results_file; // where the vro results are stored 
 
 bool loadImgTime(map<int, double>&); // load synchronized time stamps
@@ -104,7 +104,7 @@ void test_with_sr4k()
   map<int, double> img_times; 
   if(!loadImgTime(img_times))
   {
-    ROS_ERROR("failed to read time file %s", g_imu_time_file.c_str());
+    ROS_ERROR("failed to read time file %s", g_img_time_file.c_str());
     return ; 
   }
   gtsam::imuBias::ConstantBias prior_bias; 
@@ -424,10 +424,10 @@ void test_read_vro()
 
 bool loadImgTime(map<int, double>& mt) // load synchronized time stamps
 {
-  ifstream inf(g_imu_time_file);
+  ifstream inf(g_img_time_file);
   if(!inf.is_open())
   {
-    ROS_ERROR("%d failed to load camera timestamp %s", __LINE__, g_imu_time_file.c_str()); 
+    ROS_ERROR("%d failed to load camera timestamp %s", __LINE__, g_img_time_file.c_str()); 
     return false; 
   }
   int img_id; 
@@ -491,7 +491,7 @@ void init_parameters()
   np.param("sr_data_name", g_data_name, string("etas_f2"));
 
   np.param("imu_file", g_imu_file, string("/home/david/work/data/sr4k/imu_bdat/etas_f2/imu_v100.log"));
-  np.param("imu_time_file", g_imu_time_file, string("/home/david/work/data/sr4k/imu_bdat/etas_f2/sr4k/timestamp.log")); 
+  np.param("imu_time_file", g_img_time_file, string("/home/david/work/data/sr4k/imu_bdat/etas_f2/sr4k/timestamp.log")); 
   np.param("vro_results_file", g_vro_results_file, string("/home/david/.ros/vro_results/etas_f2_vro_results.log")); 
   np.param("chi2_for_vro", g_chi2_test, g_chi2_test); 
   np.param("plane_aided", g_plane_factor, true);

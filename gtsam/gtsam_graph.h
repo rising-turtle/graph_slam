@@ -81,6 +81,7 @@ public:
   void setWorld2Original(double r, double p, double y);   // 
   void setWorld2Original(double p); 
   void setCamera2IMU(double p); 
+  void setCamera2IMUTranslation(double px, double py, double pz); // only set translation 
   gtsam::Pose3 * mp_w2o;      // transform from world to original (IMU)
   gtsam::Pose3 * mp_u2c;      // transform from IMU to camera 
   gtsam::imuBias::ConstantBias * mp_prev_bias; 

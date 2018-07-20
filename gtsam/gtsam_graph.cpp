@@ -208,6 +208,14 @@ void CGraphGT::setWorld2Original(double p)
    cout << "rotation all: "<< R_g2b * R_b2o * t<<endl; 
 }
 
+void CGraphGT::setCamera2IMUTranslation(double px, double py, double pz) // only set translation 
+{
+    Rot3 R_g2o;  
+    Point3 t(px, py, pz); 
+    (*mp_u2c) = Pose3::Create(R_g2o, t);
+}
+
+
 void CGraphGT::setCamera2IMU(double p)
 {
   //// Body/IMU Coordinate System 
@@ -626,14 +634,14 @@ bool CGraphGT::addToGTSAM(MatchingResult& mr, bool set_estimate)
   Eigen::Matrix<double, 6, 6> Adj_Tuc = (*mp_u2c).AdjointMap(); 
   tmp = Adj_Tuc * mr.edge.informationMatrix * Adj_Tuc.transpose(); 
 
-  Eigen::Matrix<double, 6, 6> I6 = Eigen::Matrix<double, 6, 6>::Identity(); 
-  Eigen::Matrix<double, 6, 6> cov = tmp.inverse(); 
-  cov = cov * tmp; 
-  if(!MatrixEqual(cov, I6, 1e-5))
+  // Eigen::Matrix<double, 6, 6> I6 = Eigen::Matrix<double, 6, 6>::Identity(); 
+  // Eigen::Matrix<double, 6, 6> cov = tmp.inverse(); 
+  // cov = cov * tmp; 
+  // if(!MatrixEqual(cov, I6, 1e-5))
   {
-    cout <<"what between id1: "<<mr.edge.id1<<" and "<<mr.edge.id2<<endl
-      <<" Inf = "<<endl<<tmp<<endl
-      <<" cov= "<<tmp.inverse()<<endl;
+    // cout <<"what between id1: "<<mr.edge.id1<<" and "<<mr.edge.id2<<endl
+    //  <<" Inf = "<<endl<<tmp<<endl
+    //  <<" cov= "<<tmp.inverse()<<endl;
   }
 
   // noiseModel::Gaussian::shared_ptr visual_odometry_noise = noiseModel::Gaussian::Information(mr.edge.informationMatrix);

@@ -39,6 +39,9 @@ target_link_libraries(main_rgbdslam_offline gtsam_graph vro rs2h_io)
 add_executable(test_vro_imu_graph test_vro_imu_graph.cpp)
 target_link_libraries(test_vro_imu_graph ${catkin_LIBRARIES} vro gtsam_graph imu_interface sr4k_io ${OpenCV_LIBS})
 
+add_executable(main_rgbdslam_imu_offline main_rgbdslam_imu_offline.cpp)
+target_link_libraries(main_rgbdslam_imu_offline ${catkin_LIBRARIES} gtsam_graph vro imu_interface rs2h_io ${OpenCV_LIBS})
+
 ############### ba + imu_vn100 #############
 add_executable(test_ba_imu_graph test_ba_imu_graph.cpp)
 target_link_libraries(test_ba_imu_graph ${catkin_LIBRARIES} vro gtsam_graph imu_interface sr4k_io ${OpenCV_LIBS})
@@ -52,7 +55,7 @@ target_link_libraries(test_plane_check_vo ${catkin_LIBRARIES} vro gtsam_graph im
 # target_link_libraries(test_param gtsam_graph ${catkin_LIBRARIES})
 
 
-add_subdirectory(test)
+# add_subdirectory(test)
 
 
 
