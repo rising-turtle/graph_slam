@@ -32,8 +32,8 @@ string fname("/home/david/work/data/sr4k/imu_bdat/etas_f5/imu_v100.log");
 
 struct trajItem
 {
-  // int id; int sid; // sequence id 
-  double timestamp; 
+  int id; int sid; // sequence id 
+  // double timestamp; 
   // string timestamp; 
   float px, py, pz; // euler angle roll, pitch, yaw; 
   float qx, qy, qz, qw; // quaternion
@@ -53,12 +53,14 @@ int main(int argc, char* argv[])
   // euler_pub = n.advertise<std_msgs::Float32MultiArray>("/euler_msg", 10); \
 
   // CamModel sr4k(250.5773, 250.5773, 90, 70, -0.8466, 0.5370); 
-  CamModel rs_F200(621.94176, 625.3561, 318.77554, 236.21507, 0.08011, -0.56891); 
-  rs_F200.m_rows = 480; // height
-  rs_F200.m_cols = 640; // width
+  // CamModel rs_F200(621.94176, 625.3561, 318.77554, 236.21507, 0.08011, -0.56891); 
+  CamModel rs435(617.306, 617.714, 326.245, 239.974); 
+  CamModel cam = rs435; 
+  cam.m_rows = 480; // height
+  cam.m_cols = 640; // width
   // sr4k.z_offset = 0.015;  // this is only for sr4k 
   float depth_scale = 0.001;
-  CSparseFeatureVO spr_vo(rs_F200);
+  CSparseFeatureVO spr_vo(cam);
 
   // parameters 
   ros::NodeHandle np("~"); 
@@ -77,15 +79,15 @@ int main(int argc, char* argv[])
   np.param("trajectory_skip", t_skip, t_skip); 
   np.param("top_left_u", su, 0); 
   np.param("top_left_v", sv, 0); 
-  np.param("bot_right_u", eu, rs_F200.m_cols); 
-  np.param("bot_right_v", ev, rs_F200.m_rows); 
+  np.param("bot_right_u", eu, cam.m_cols); 
+  np.param("bot_right_v", ev, cam.m_rows); 
   
 
   int rect[4] = {su, sv, eu, ev}; 
 
   cout <<"rect "<<rect[0]<<" "<<rect[1]<<" "<<rect[2]<<" "<<rect[3]<<endl;
 
-  mapPCD(trajFile, imgDir, outPCD, skip, t_skip, depth_scale, &spr_vo, rs_F200, &rect[0]);
+  mapPCD(trajFile, imgDir, outPCD, skip, t_skip, depth_scale, &spr_vo, cam, &rect[0]);
 
   ROS_INFO("Finish mapping into %s!", outPCD.c_str());
 
@@ -147,17 +149,18 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
     // ss<<img_dir<<"/d1_"<<setfill('0')<<setw(7)<<ti.sid<<".bdat";  // setw(4)
     // r4k.readOneFrameCV(ss.str(), i_img, d_img);
   
-    // 
+    /* 
     int index = findIndex(ti.timestamp, vTimes); 
     if(index < 0)
     {
       cout <<"mapping_PLY_rs.cpp: find to find timestamp: "<<ti.timestamp<<endl;
       break; 
-    }
+    }*/
 
     // read image 
     // ss_rgb << img_dir <<"/color/"<<ti.timestamp<<".png"; 
     // ss_dpt << img_dir <<"/depth/"<<ti.timestamp<<".png"; 
+    int index = ti.sid - 1;
     ss_rgb << img_dir <<"/"<<vRGBs[index]; 
     ss_dpt << img_dir <<"/"<<vDPTs[index]; 
 
@@ -165,7 +168,7 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
     d_img = cv::imread(ss_dpt.str().c_str(), -1); 
     if(i_img.data == NULL || d_img.data == NULL)
     {
-      ROS_ERROR("failed to load camera data at dir %s with timestamp = %lf", img_dir.c_str(), ti.timestamp); 
+      ROS_ERROR("failed to load camera data at dir %s with timestamp = %lf", img_dir.c_str(), /*ti.timestamp*/ vTimes[ti.sid-1]); 
       ROS_WARN("ss_rgb = %s ss_dpt = %s", ss_rgb.str().c_str(), ss_dpt.str().c_str());
       break; 
     }
@@ -179,7 +182,7 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
     pcl::transformPointCloud(*pci, *pwi, T.cast<float>()); // transform into global 
 
     *pc_w += *pwi; 
-    ROS_INFO("handle frame at timestamp %lf, add %d pts", ti.timestamp, pwi->points.size());
+    ROS_INFO("handle frame at timestamp %lf, add %d pts", /*ti.timestamp*/ vTimes[ti.sid-1], pwi->points.size());
   }
   
   // output into file 
@@ -233,7 +236,8 @@ bool readTraj(std::string f, vector<struct trajItem>& t)
     trajItem ti; 
     // sscanf(buf, "%d %f %f %f %f %f %f %d", &ti.id, &ti.px, &ti.py, &ti.pz, &ti.roll, &ti.pitch, &ti.yaw, &ti.sid); 
     // sscanf(buf, "%d %f %f %f %f %f %f %f %d", &ti.id, &ti.px, &ti.py, &ti.pz, &ti.qx, &ti.qy, &ti.qz, &ti.qw, &ti.sid); 
-    sscanf(buf, "%lf %f %f %f %f %f %f %f", &ti.timestamp, &ti.px, &ti.py, &ti.pz, &ti.qx, &ti.qy, &ti.qz, &ti.qw); 
+    // sscanf(buf, "%lf %f %f %f %f %f %f %f", &ti.timestamp, &ti.px, &ti.py, &ti.pz, &ti.qx, &ti.qy, &ti.qz, &ti.qw); 
+    sscanf(buf, "%d %f %f %f %f %f %f %f %d", &ti.id, &ti.px, &ti.py, &ti.pz, &ti.qx, &ti.qy, &ti.qz, &ti.qw, &ti.sid); 
     // ti.timestamp = string(b); 
     t.push_back(ti); 
     // if(t.size() < 10)
