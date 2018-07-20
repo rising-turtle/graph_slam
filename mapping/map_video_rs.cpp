@@ -140,6 +140,7 @@ bool showPCDIncremental()
 
     // yellow  
     // double r = 1.0; 
+    bool waitForStart = true; 
 
     for(int i=0; i<vobs.size() && !v.stopped(); i++)
     {
@@ -185,9 +186,18 @@ bool showPCDIncremental()
 	d_img = cv::imread(fdpt.c_str(), -1); 
 
 	// show images 
+	cv::namedWindow("intensity img", CV_WINDOW_KEEPRATIO); 
+	cv::namedWindow("depth img", CV_WINDOW_KEEPRATIO); 
 	cv::imshow("intensity img", i_img); 
 	cv::imshow("depth img", d_img); 
 	cv::waitKey(3); 
+	if(waitForStart)
+	{
+	    cout <<"wait for start!" <<endl; 
+	    int k; 
+	    cin >> k; 
+	    waitForStart = false; 
+	}
 
 	// point cloud 
 	CloudPtr pci(new Cloud);
@@ -204,7 +214,8 @@ bool showPCDIncremental()
 
 	// voxel grid filter
 	CloudPtr tmp(new Cloud); 
-	filterPointCloud<pcl::PointXYZRGBA>(0.1, pc_w, tmp); 
+	// filterPointCloud<pcl::PointXYZRGBA>(0.1, pc_w, tmp); 
+	filterPointCloud<pcl::PointXYZRGBA>(0.05, pc_w, tmp); 
 	pc_w.swap(tmp); 
 
 	// set pose of the current point cloud 
@@ -213,7 +224,7 @@ bool showPCDIncremental()
 	// pwi->sensor_origin_ = Tf.block<4,1>(0,3); 
 	// pwi->sensor_orientation_ = Eigen::Quaternionf(ti.qw, ti.qx, ti.qy, ti.qz); 
 
-	const int K = 2; // 1 
+	const int K = 3; // 1 
 	if(!v.stopped())
 	{
 	    // add trajectory 
