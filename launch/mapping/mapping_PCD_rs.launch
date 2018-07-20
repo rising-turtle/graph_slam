@@ -1,23 +1,32 @@
 
 <launch>
 
-<arg name="result_dir" default="/home/david/.ros/real_sense/f200"/>
-<arg name="data_name" default="04_04_2017_middle"/> <!-- 04_04_2017_emud2 -->
-<arg name="img_dir" default="/home/david/work/data/f200"/>
+<!--arg name="result_dir" default="/home/david/.ros/real_sense/f200"/-->
+<arg name="result_dir" default="/home/davidz/work/data/drone/dataset_1"/>
+<arg name="data_name" default="dataset_1"/> <!-- 04_04_2017_middle 04_04_2017_emud2 -->
+<arg name="img_dir" default="/home/davidz/work/data/drone/dataset_1"/>
 
   <node pkg="graph_slam" type="mapping_PCD_rs" name="mapping_PCD_rs" output="screen">
     <param name="trajectory_file"   value="$(arg img_dir)/traj_long_table_2.txt"/>
-    
-    <param name="record_file"       value="$(arg img_dir)/$(arg data_name)/timestamp.txt"/>
+    <param name="trajectory_file"   value="$(arg img_dir)/dataset_1_vio_trajectory.log"/>
+
+    <param name="record_file"       value="$(arg img_dir)/timestamp.txt"/>
 
     <param name="img_directory"     value="$(arg img_dir)/$(arg data_name)"/>
+    <param name="img_directory"     value="$(arg img_dir)"/>
+
     <param name="output_PCD_file"   value="$(arg result_dir)/$(arg data_name)_pc.pcd"/>
-    <param name="downsample_skip"   value="1"/>
-    <param name="trajectory_skip"   value="5"/>
+    <param name="output_PCD_file"   value="$(arg result_dir)/$(arg data_name)_pc.pcd"/>
+
+    <param name="downsample_skip"   value="2"/>
+    <param name="trajectory_skip"   value="1"/> <!-- 5 -->
     <param name="top_left_u"        value="0"/>
     <param name="top_left_v"        value="0"/>
     <param name="bot_right_u"       value="640"/>
     <param name="bot_right_v"       value="480"/>
+    
+    <param name="voxel_grid_size"   value="0.015"/>
+    <param name="z_pass_through"    value="1.7"/>
   </node>
 
 </launch>
