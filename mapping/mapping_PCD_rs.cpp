@@ -30,6 +30,10 @@ using namespace std;
 
 #define D2R(d) (((d)*M_PI)/180)
 
+// typedef pcl::PointXYZRGB  Point;
+typedef pcl::PointCloud<pcl::PointXYZRGB>  CloudL;  
+typedef typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr CloudLPtr;
+
 string fname("/home/david/work/data/sr4k/imu_bdat/etas_f5/imu_v100.log"); 
 
 double voxel_grid_size = 0.02; 
@@ -155,7 +159,7 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
   // Pose3 Tu2c ; 
   // setTu2c(Tu2c); 
   
-  CloudPtr pc_w(new Cloud); 
+  CloudLPtr pc_w(new CloudL); 
 
   for(int i=0; i<t.size(); i+= t_skip)
   {
@@ -199,16 +203,17 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
       break; 
     }
     
-    CloudPtr pci(new Cloud);
-    CloudPtr pwi(new Cloud); 
+    CloudLPtr pci(new CloudL);
+    CloudLPtr pwi(new CloudL); 
     generatePointCloud(i_img, d_img, 0.001, cam, *pci); 
     
     Eigen::Matrix4d T = p.matrix(); 
     
     {
 	// pass through filter 
-	CloudPtr tmp(new Cloud); 
-	passThroughZ<pcl::PointXYZRGBA>(z_far, pci, tmp); 
+	CloudLPtr tmp(new CloudL); 
+	// passThroughZ<pcl::PointXYZRGBA>(z_far, pci, tmp); 
+	passThroughZ<pcl::PointXYZRGB>(z_far, pci, tmp); 
 	pci.swap(tmp); 
     }
 
@@ -217,8 +222,9 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
     *pc_w += *pwi; 
     {
 	// voxel grid filter
-	CloudPtr tmp(new Cloud); 
-	filterPointCloud<pcl::PointXYZRGBA>(voxel_grid_size, pc_w, tmp); 
+	CloudLPtr tmp(new CloudL); 
+	// filterPointCloud<pcl::PointXYZRGBA>(voxel_grid_size, pc_w, tmp); 
+	filterPointCloud<pcl::PointXYZRGB>(voxel_grid_size, pc_w, tmp); 
 	pc_w.swap(tmp); 
     }
     ROS_INFO("handle frame at timestamp %lf, add %d pts", /*ti.timestamp*/ vTimes[ti.sid-1], pwi->points.size());
@@ -229,7 +235,9 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
   pcl::io::savePCDFile(outPCD, *pc_w); 
 
   // see it
-  CVTKViewer<pcl::PointXYZRGBA> v;
+  // CVTKViewer<pcl::PointXYZRGBA> v;
+  CVTKViewer<pcl::PointXYZRGB> v;
+
   // v.getViewer()->addCoordinateSystem(0.2, 0, 0); 
   v.addPointCloud(pc_w, "PC in world"); 
   while(!v.stopped())
