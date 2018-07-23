@@ -200,9 +200,11 @@ void CImuBase::getNormalizedAcc(int index, double& ax, double& ay, double& az)
   double wx = 0, wy = 0, wz = 0; 
   for(int i=0; i<index; i++)
   {
+   // debug m [gx gy gz ax ay az]
     Eigen::Vector6d& m = mv_measurements[i]; 
     // gx += m(3); gy += m(4); gz += m(5); 
-    wx += m(0); wy += m(1); wz += m(2); 
+    // wx += m(0); wy += m(1); wz += m(2); 
+    wx += m(3); wy += m(4); wz += m(5); 
   }
   wx /= (double)(index);  
   wy /= (double)(index); 
@@ -224,7 +226,8 @@ void CImuBase::initializeGravity(int index)
   for(int i=0; i<index; i++)
   {
     Eigen::Vector6d& m = mv_measurements[i]; 
-    gx += m(3); gy += m(4); gz += m(5); 
+    // gx += m(3); gy += m(4); gz += m(5); 
+    gx += m(0); gy += m(1); gz += m(2); 
   }
   
   gx /= (double)(index);  
