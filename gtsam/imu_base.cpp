@@ -207,7 +207,8 @@ void CImuBase::getNormalizedAcc(int index, double& ax, double& ay, double& az)
   wx /= (double)(index);  
   wy /= (double)(index); 
   wz /= (double)(index); 
-  ax = wx; ay = wy; az = wz; 
+  double norm = sqrt(wx*wx + wy*wy + wz*wz); 
+  ax = wx/norm; ay = wy/norm; az = wz/norm; 
   return ; 
 }
 
