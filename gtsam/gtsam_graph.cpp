@@ -276,6 +276,43 @@ void CGraphGT::computeCovVRO(CCameraNode* pNew, MatchingResult& m)
   }
 }
 
+// input ax, ay, az represents normalized gravity vector 
+// at initial phase where the imu is assumed static 
+void CGraphGT::initFromImu(double ax, double ay, double az)
+{
+    if(m_graph_map.size() <= 0)
+    {
+	cerr<<"No node has been created before calling initFromImu!"<<endl; 
+	return ; 
+    }
+    
+    // compute rotation for the first pose 
+    Eigen::Vector3d fv(ax, ay, az); 
+    Eigen::Vector3d tv(0, 0, -1); 
+    Eigen::Vector3d w = fv.cross(tv).normalized(); 
+    double angle = acos(fv.dot(tv)); 
+    
+    double half_angle = angle /2.;
+    Eigen::Vector4d vq; 
+    vq.head<3>() = w * sin(half_angle); 
+    vq[3] = cos(half_angle); 
+    Eigen::Quaterniond q(vq); 
+    Eigen::Matrix<double, 3, 3> m = q.toRotationMatrix(); 
+    
+    // cout <<"fv= "<<endl<<fv<<endl;
+    // cout <<"m = "<<endl<<m<<endl; 
+    Rot3 R(m);
+    Point3 t(0, 0, 0); 
+    Pose3 new_pose(R,t); 
+    
+    *(mp_w2o) = new_pose; 
+
+    // new_pose.print("new_pose");
+    // mp_node_values->update(X(m_graph_map[0]->m_id), new_pose); 
+    // mp_new_node->update(X(m_graph_map[0]->m_id), new_pose); 
+    return ; 
+}
+
 void CGraphGT::firstNode(CCameraNode* n, bool online)
 {
     // 1, ids 

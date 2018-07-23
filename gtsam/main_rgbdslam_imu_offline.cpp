@@ -133,6 +133,11 @@ void rgbdslam_imu_offline()
   pNewNode->m_seq_id = g_f_start;
   gt_graph.firstNode(pNewNode, false);
   imu->setStartPoint(time_vf[g_f_start-1]);  // first measurement 
+  
+  // initialization from imu measurement 
+  double ax, ay, az; 
+  imu->getNormalizedAcc(ax, ay, az); 
+  gt_graph.initFromImu(ax, ay, az); 
 
   // record consequent NavState 
   NavState pre_state, cur_state; 

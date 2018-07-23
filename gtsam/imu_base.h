@@ -46,6 +46,11 @@ class CImuBase
     void resetGravity(double gx, double gy, double gz);     // reset gravity vector 
     void initializeGravity(int id);     // assume in the initial period, imu stay steady 
 
+    // compute normalized acceleration given index
+    void getNormalizedAcc(int index, double& ax, double& ay, double& az);
+    void getNormalizedAcc(double& ax, double& ay, double& az);
+
+
     // generate imu parameters first 
     static boost::shared_ptr<gtsam::PreintegratedCombinedMeasurements::Params> getParam();
     virtual boost::shared_ptr<gtsam::PreintegratedCombinedMeasurements::Params> getIMUParams() = 0; // this function must be done 

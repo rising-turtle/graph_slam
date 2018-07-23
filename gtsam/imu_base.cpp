@@ -138,7 +138,7 @@ int CImuBase::findIndexAt(double t)
     {
       if(i>=1)
       {
-        if(mv_timestamps[i + m_syn_start_id] - t > t - mv_timestamps[i + m_syn_start_id-1])
+        if(mv_timestamps[i + m_syn_start_id] - t > t - mv_timestamps[i + m_syn_start_id-1] && i > 0)
           return i-1;
         else 
           return i; 
@@ -182,6 +182,35 @@ void CImuBase::setState(gtsam::NavState& ns)   // set previous state
   m_prev_state = ns; 
 }
 
+void CImuBase::getNormalizedAcc(double& ax, double& ay, double& az)
+{
+    if(m_syn_start_id <= 0)
+	return getNormalizedAcc(1, ax, ay, az); 
+    return getNormalizedAcc(m_syn_start_id, ax, ay, az); 
+}
+
+void CImuBase::getNormalizedAcc(int index, double& ax, double& ay, double& az)
+{
+  if(index > mv_measurements.size()) index = mv_measurements.size(); 
+  if(index <= 0 )
+  {
+    cerr << __FILE__<<" getNormalizedAcc at index = "<<index<<endl;
+    return ;
+  }
+  double wx = 0, wy = 0, wz = 0; 
+  for(int i=0; i<index; i++)
+  {
+    Eigen::Vector6d& m = mv_measurements[i]; 
+    // gx += m(3); gy += m(4); gz += m(5); 
+    wx += m(0); wy += m(1); wz += m(2); 
+  }
+  wx /= (double)(index);  
+  wy /= (double)(index); 
+  wz /= (double)(index); 
+  ax = wx; ay = wy; az = wz; 
+  return ; 
+}
+
 void CImuBase::initializeGravity(int index)
 {
   if(index > mv_measurements.size()) index = mv_measurements.size(); 
@@ -191,21 +220,18 @@ void CImuBase::initializeGravity(int index)
     return ;
   }
   double gx = 0, gy = 0, gz = 0; 
-  double wx = 0, wy = 0, wz = 0; 
   for(int i=0; i<index; i++)
   {
     Eigen::Vector6d& m = mv_measurements[i]; 
     gx += m(3); gy += m(4); gz += m(5); 
-    wx += m(0); wy += m(1); wz += m(2); 
   }
   
   gx /= (double)(index);  
   gy /= (double)(index); 
   gz /= (double)(index); 
-
-  wx /= (double)(index);  
-  wy /= (double)(index); 
-  wz /= (double)(index); 
+  
+  double wx, wy, wz; 
+  getNormalizedAcc(index, wx, wy, wz); 
 
   cout <<__FILE__<<" in initializeGravity() compute gx = "<<gx<<" gy = "<<gy<<" gz = "<<gz<<endl;
   // resetGravity(gx, gy, gz); 

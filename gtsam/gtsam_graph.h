@@ -50,6 +50,8 @@ public:
   CGraphGT(); 
   virtual ~CGraphGT();
   
+  void initFromImu(double ax, double ay, double az); // try to reset the pose of the first node, called after firstNode
+  
   void firstNode(CCameraNode*, bool online=true);   // initialize everything 
   ADD_RET addNode(CCameraNode*);              // try to add a new node into graph 
   void fakeOdoNode(CCameraNode*);             // fake a Identity transformation node
