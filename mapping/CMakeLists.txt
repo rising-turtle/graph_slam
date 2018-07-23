@@ -30,6 +30,9 @@ target_link_libraries(mapping_PLY_rs gtsam vro sr4k_io ${OpenCV_LIBS})
 add_executable(pcd2mesh pcd2mesh.cpp)
 target_link_libraries(pcd2mesh ${PCL_LIBRARIES})
 
+add_executable(pub_pcd pub_pcd.cpp)
+target_link_libraries(pub_pcd ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
 ################## generate 3d map incrementally for recording ##############
 add_executable(map_video map_video.cpp)
 target_link_libraries(map_video gtsam_graph vro sr4k_io ${OpenCV_LIBS})
