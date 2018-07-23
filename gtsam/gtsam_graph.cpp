@@ -301,6 +301,10 @@ void CGraphGT::initFromImu(double ax, double ay, double az)
     
     // cout <<"fv= "<<endl<<fv<<endl;
     // cout <<"m = "<<endl<<m<<endl; 
+    
+    Eigen::Vector3d dst_t = m * fv; 
+    // cout <<"dst_t: "<<dst_t.normalized()<<endl; 
+
     Rot3 R(m);
     Point3 t(0, 0, 0); 
     Pose3 new_pose(R,t); 

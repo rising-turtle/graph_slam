@@ -4,7 +4,7 @@ project(graph_slam)
 ################## VRO ############################
 # execute_process(COMMAND rospack find visual_odometry OUTPUT_VARIABLE VO_ROOT)
 # include_directories(/home/david/work/ros/indigo/src/visual_odometry/src/VRO)
-include_directories("../../visual_odometry/src/VRO")
+include_directories("../../visual_odometry/src/VRO" ${CMAKE_CURRENT_SOURCE_DIR})
 
 # message("STATUS VO_ROOT : ${VO_ROOT}")
 # include_directories(${VO_ROOT}/src/VRO)
@@ -56,7 +56,8 @@ target_link_libraries(test_plane_check_vo ${catkin_LIBRARIES} vro gtsam_graph im
 
 
 # add_subdirectory(test)
-
+add_executable(test_imu_gravity test/test_imu_gravity.cpp)
+target_link_libraries(test_imu_gravity ${catkin_LIBRARIES} gtsam_graph vro imu_interface rs2h_io ${OpenCV_LIBS})
 
 
 
