@@ -238,7 +238,7 @@ bool mapPCD(std::string f, std::string img_dir, std::string outPCD, int skip, in
   // CVTKViewer<pcl::PointXYZRGBA> v;
   CVTKViewer<pcl::PointXYZRGB> v;
 
-  // v.getViewer()->addCoordinateSystem(0.2, 0, 0); 
+  v.getViewer()->addCoordinateSystem(1.0, 0, 0, 0); 
   v.addPointCloud(pc_w, "PC in world"); 
   while(!v.stopped())
   {

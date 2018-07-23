@@ -19,13 +19,13 @@
     <param name="output_PCD_file"   value="$(arg result_dir)/$(arg data_name)_pc.pcd"/>
 
     <param name="downsample_skip"   value="2"/>
-    <param name="trajectory_skip"   value="1"/> <!-- 5 -->
+    <param name="trajectory_skip"   value="3"/> <!-- 5 -->
     <param name="top_left_u"        value="0"/>
     <param name="top_left_v"        value="0"/>
     <param name="bot_right_u"       value="640"/>
     <param name="bot_right_v"       value="480"/>
     
-    <param name="voxel_grid_size"   value="0.015"/>
+    <param name="voxel_grid_size"   value="0.02"/> <!-- 0.005 -->
     <param name="z_pass_through"    value="1.7"/>
   </node>
 

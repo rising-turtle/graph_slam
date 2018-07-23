@@ -10,7 +10,7 @@
     <param name="data_name" 	   value="$(arg data_name)"/>
     <param name="gt_output_dir"    value="$(arg data_dir)"/>
     <param name="vro_results_file" value="/home/davidz/.ros/vro_results/dataset_1_vro_results.log"/>
-    <param name="trajectory_color" value="5"/> <!-- 0:RED 1:GREEN 2:BLUE 3:PURPLE 4:WHITE 5:YELLOW 6:DARK -->
+    <param name="trajectory_color" value="2"/> <!-- 0:RED 1:GREEN 2:BLUE 3:PURPLE 4:WHITE 5:YELLOW 6:DARK -->
 
   </node>
 
