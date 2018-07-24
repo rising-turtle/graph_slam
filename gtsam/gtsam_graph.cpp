@@ -288,7 +288,7 @@ void CGraphGT::initFromImu(double ax, double ay, double az)
     
     // compute rotation for the first pose 
     Eigen::Vector3d fv(ax, ay, az); 
-    Eigen::Vector3d tv(0, 0, -1); 
+    Eigen::Vector3d tv(0, 0, 1);  // vn100's gz points to upwards
     Eigen::Vector3d w = fv.cross(tv).normalized(); 
     double angle = acos(fv.dot(tv)); 
     
