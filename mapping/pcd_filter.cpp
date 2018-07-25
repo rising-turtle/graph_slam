@@ -158,8 +158,9 @@ void remove_floor_pt(CCD_PR& in, CCD_PR& out)
     for(int i=0; i<in->points.size(); i++)
     {
 	C_PT& pt = in->points[i]; 
-	if(pt.z > z_floor + 0.2)
+	if(pt.z > z_floor + 0.1)
 	{
+	    pt.z = pt.z - z_floor; // take floor as the x-y axis
 	    out->points.push_back(pt); 
 	}
     }
