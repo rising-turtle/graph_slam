@@ -45,11 +45,11 @@ boost::shared_ptr<PreintegratedCombinedMeasurements::Params> CImuVn100::getIMUPa
     // cout <<" HI I AM HERE 14"<<endl; 
     // according to https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model
     // 
-    Matrix33 measured_acc_cov = Matrix33::Identity(3,3)*pow(accel_noise_sigma, 2) * 10. /dt ; // sigma_a * sigma_a / dt * 10, ~2e-6 * 200 *10 = 4e-3
-    Matrix33 measured_omega_cov = Matrix33::Identity(3,3)*pow(gyro_noise_sigma, 2) /dt; // sigma_g * sigma_g / dt ~ 0.36e-8 * 200 = 0.72e-6
+    Matrix33 measured_acc_cov = Matrix33::Identity(3,3)*pow(accel_noise_sigma, 2); // * 10. /dt ; // sigma_a * sigma_a / dt * 10, ~2e-6 * 200 *10 = 4e-3
+    Matrix33 measured_omega_cov = Matrix33::Identity(3,3)*pow(gyro_noise_sigma, 2); // /dt; // sigma_g * sigma_g / dt ~ 0.36e-8 * 200 = 0.72e-6
     Matrix33 integration_error_cov = Matrix33::Identity(3,3)*1e-4; // error committed in integration position from veloctiy
-    Matrix33 bias_acc_cov = Matrix33::Identity(3,3) * pow(accel_bias_rw_sigma, 2) * dt ; // sigma_ba * sigma_ba * dt, ~ 3e-5 * 0.05 = 1.5e-6
-    Matrix33 bias_omega_cov = Matrix33::Identity(3,3) * pow(gyro_bias_rw_sigma, 2) * dt; // sigma_bg * sigma_bg * dt, ~ 0.25e-8 * 0.05 = 1.25e-10
+    Matrix33 bias_acc_cov = Matrix33::Identity(3,3) * pow(accel_bias_rw_sigma, 2); //  * dt ; // sigma_ba * sigma_ba * dt, ~ 3e-5 * 0.05 = 1.5e-6
+    Matrix33 bias_omega_cov = Matrix33::Identity(3,3) * pow(gyro_bias_rw_sigma, 2); // * dt; // sigma_bg * sigma_bg * dt, ~ 0.25e-8 * 0.05 = 1.25e-10
     Matrix66 bias_acc_omega_int = Matrix::Identity(6,6) * 1e-3; // error in the bias used for preintegration 
 
     // cout <<"HI I AM HERE 12"<<endl; 
@@ -57,9 +57,9 @@ boost::shared_ptr<PreintegratedCombinedMeasurements::Params> CImuVn100::getIMUPa
     p->gyroscopeCovariance = measured_omega_cov; 
     p->accelerometerCovariance = measured_acc_cov; 
     p->integrationCovariance = integration_error_cov; 
-    p->biasAccCovariance = bias_acc_cov*s; 
-    p->biasOmegaCovariance = bias_omega_cov*s;  
-    p->biasAccOmegaInt = bias_acc_omega_int*s; 
+    p->biasAccCovariance = bias_acc_cov; 
+    p->biasOmegaCovariance = bias_omega_cov;  
+    p->biasAccOmegaInt = bias_acc_omega_int; 
     b_once = false;
   }
   // cout <<"HI I AM HERE 13"<<endl;
